@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RmqBindingTest.Consumer", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RmqBindingTest.Publisher", "RmqBindingTest.Publisher\RmqBindingTest.Publisher.csproj", "{20CDDB54-266A-46FD-9144-D193C4FB278C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmqBindingTest", "RmqBindingTest\RmqBindingTest.csproj", "{157F768E-C379-4562-8974-34940B1D4D09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RmqBindingTest", "RmqBindingTest\RmqBindingTest.csproj", "{157F768E-C379-4562-8974-34940B1D4D09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2F20C18A-1486-4812-B57D-31EDB2CA3A32}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

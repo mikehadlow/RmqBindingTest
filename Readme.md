@@ -1,5 +1,7 @@
 This repository provides a .NET solution to test large numbers of bindings on RabbitMQ.
 
+Accompanying blog post is [here](https://mikehadlow.com/posts/large-numbers-of-bindings-with-rabbitmq/)
+
 To build simply clone this repository. The `RmqBindingTest.sln` solution file should open with Visual Studio and restore and build without any further configuration.
 
 To build self contained executables use the `dotnet` command as follows:
