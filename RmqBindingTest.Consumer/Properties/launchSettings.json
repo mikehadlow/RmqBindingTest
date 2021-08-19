@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RmqBindingTest.Consumer": {
+      "commandName": "Project",
+      "commandLineArgs": "test 0 99"
+    }
+  }
+}
