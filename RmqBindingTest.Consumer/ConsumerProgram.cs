@@ -43,8 +43,10 @@ namespace RmqBindingTest.Consumer
             }
 
             var consumer = new EventingBasicConsumer(model);
+            var count = 0;
             consumer.Received += (ch, ea) =>
             {
+                count++;
                 var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 WriteLine(message);
@@ -61,6 +63,13 @@ namespace RmqBindingTest.Consumer
                 await Task.Delay(-1, cts.Token);
             }
             catch (TaskCanceledException) { }
+
+            var statsString = $"CON|{instanceName}|{count}";
+            var statsBody = Encoding.UTF8.GetBytes(statsString);
+            model.ExchangeDeclare(Connection.StatsExchange, ExchangeType.Direct);
+            model.BasicPublish(Connection.StatsExchange, "STAT", null, statsBody);
+
+            WriteLine($"Published stats: {statsString}");
 
             model.Dispose();
             connection.Dispose();

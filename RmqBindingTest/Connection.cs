@@ -9,6 +9,7 @@ namespace RmqBindingTest
         public static string User => GetEnv("BINDING_TEST_RMQ_USER");
         public static string Password => GetEnv("BINDING_TEST_RMQ_PASSWORD");
         public static string Exchange => "BindingTest";
+        public static string StatsExchange => "BindingTestStats";
 
         static string GetEnv(string variableName)
             => Environment.GetEnvironmentVariable(variableName) 

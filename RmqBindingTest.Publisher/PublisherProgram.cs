@@ -15,49 +15,60 @@ namespace RmqBindingTest
             CancelKeyPress += (_, cancelArgs) => 
             {
                 cts.Cancel();
-                cts.Dispose();
                 cancelArgs.Cancel = true;
             };
 
-            WriteLine("Starting loop. Ctrl-C to stop.");
-            return RunLoop(ParseArgs(args), cts.Token);
+            var parsedArgs = ParseArgs(args);
+            WriteLine($"Starting {parsedArgs.instanceName}, {parsedArgs.minValue}-{parsedArgs.maxValue}. Ctrl-C to stop.");
+            return RunLoop(parsedArgs, cts.Token);
         }
 
-        static async Task RunLoop((string instanceName, int minValue, int maxValue) parsedArgs, CancellationToken cancellation)
+        static async Task RunLoop(
+            (string instanceName, int minValue, int maxValue) parsedArgs,
+            CancellationToken cancellation)
         {
+            var connectionFactory = new ConnectionFactory 
+            { 
+                UserName = Connection.User,
+                Password = Connection.Password,
+                HostName = Connection.Host,
+                VirtualHost = Connection.Vhost,
+                ClientProvidedName = $"BindingTest Publisher {parsedArgs.instanceName}"
+            };
+
+            using var connection = connectionFactory.CreateConnection();
+            using var model = connection.CreateModel();
+
+            var count = 0;
             try
             {
-                var connectionFactory = new ConnectionFactory 
-                { 
-                    UserName = Connection.User,
-                    Password = Connection.Password,
-                    HostName = Connection.Host,
-                    VirtualHost = Connection.Vhost,
-                    ClientProvidedName = $"BindingTest Publisher {parsedArgs.instanceName}"
-                };
-                using var connection = connectionFactory.CreateConnection();
-                using var model = connection.CreateModel();
-
                 model.ExchangeDeclare(Connection.Exchange, ExchangeType.Topic);
 
-                var i = parsedArgs.minValue;
                 while (!cancellation.IsCancellationRequested)
                 {
                     await Task.Delay(1, cancellation);
 
+                    var i = (count % (parsedArgs.maxValue - parsedArgs.minValue)) + parsedArgs.minValue;
                     var routingKey = i.ToString(@"00\.0\.0");
-                    var body = Encoding.UTF8.GetBytes($"Message number {i}, RoutingKey={routingKey}");
+                    var body = Encoding.UTF8.GetBytes($"Message number: {count,10}, RoutingKey={routingKey}");
 
                     model.BasicPublish(Connection.Exchange, routingKey, null, body);
-
-                    i++;
-                    if (i > parsedArgs.maxValue) i = parsedArgs.minValue;
+                    count++;
                 }
             }
             catch (TaskCanceledException) { }
             catch (Exception exception)
             {
                 WriteLine(exception.ToString());
+            }
+            finally
+            {
+                var statsString = $"PUB|{parsedArgs.instanceName}|{count}";
+                var statsBody = Encoding.UTF8.GetBytes(statsString);
+                model.ExchangeDeclare(Connection.StatsExchange, ExchangeType.Direct);
+                model.BasicPublish(Connection.StatsExchange, "STAT", null, statsBody);
+
+                WriteLine($"Published stats: {statsString}");
             }
         }
 
