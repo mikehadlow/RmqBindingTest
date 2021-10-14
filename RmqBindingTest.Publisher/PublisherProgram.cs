@@ -50,7 +50,7 @@ namespace RmqBindingTest
 
                     var i = (count % (parsedArgs.maxValue - parsedArgs.minValue)) + parsedArgs.minValue;
                     var routingKey = i.ToString(@"00\.0\.0");
-                    var body = Encoding.UTF8.GetBytes($"Message number: {count,10}, RoutingKey={routingKey}");
+                    var body = Encoding.UTF8.GetBytes($"[{DateTime.UtcNow}] Message number: {count,10}, RoutingKey={routingKey}");
 
                     model.BasicPublish(Connection.Exchange, routingKey, null, body);
                     count++;
@@ -77,15 +77,15 @@ namespace RmqBindingTest
             if(args.Length == 3 
                 && int.TryParse(args[1], out int minValue)
                 && int.TryParse(args[2], out int maxValue)
-                && (minValue is >= 0 and <= 9999)
-                && (maxValue is >= 0 and <= 9999)
+                && (minValue is >= 0 and <= 999999)
+                && (maxValue is >= 0 and <= 999999)
                 && (maxValue >= minValue))
             {
                 WriteLine($"Instance {args[0]}, {minValue}-{maxValue}");
                 return (args[0], minValue, maxValue);
             }
 
-            WriteLine("Invalid args expected: <instance name> <min value int 0-9999> <max value int 0-9999>");
+            WriteLine("Invalid args expected: <instance name> <min value int 0-999999> <max value int 0-999999>");
             WriteLine("Using defaults 'default' 0 9999");
             return ("default", 0, 9999);
         }

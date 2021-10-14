@@ -63,6 +63,10 @@ namespace RmqBindingTest.StatsCollector
             };
             var consumerTag = model.BasicConsume(queueName, false, consumer);
 
+            WriteLine($"Host: {Connection.Host}");
+            WriteLine($"VHst: {Connection.Vhost}");
+            WriteLine($"User: {Connection.User}");
+            WriteLine($"Pass: {Connection.Password}");
             WriteLine("Stats consumer started. Ctrl-C to exit.");
 
             // delay indefinitely until token is cancelled.
